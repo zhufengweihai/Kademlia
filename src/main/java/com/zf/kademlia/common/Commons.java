@@ -13,8 +13,10 @@ public interface Commons {
 	int PORT = 19683;
 	
 	int CODE_BOOTSTRAP = 0x032D;
-	int CODE_PING = 0x001A;
-	int CODE_STORE = 0x002A;
-	int CODE_FIND_NODE = 0x01BA;
-	int CODE_FIND_VALUE = 0x0374;
+	byte CODE_PING = 0x001A;
+	byte CODE_STORE = 0x003A;
+	byte CODE_FIND_NODE = 0x05A;
+	byte CODE_FIND_VALUE = 0x07A;
+	
+	
 }
