@@ -16,14 +16,12 @@ public class KadClient extends IoHandlerAdapter {
 	private static Logger logger = LoggerFactory.getLogger(KadClient.class);
 
 	private IoConnector connector;
-	private static IoSession session;
-
 	public KadClient(Node node) {
 		connector = new NioDatagramConnector();
 		connector.setHandler(this);
 		ConnectFuture connFuture = connector.connect(new InetSocketAddress(node.getIp(), node.getPort()));
 		connFuture.awaitUninterruptibly();
-		session = connFuture.getSession();
+		IoSession session = connFuture.getSession();
 	}
 
 	@Override

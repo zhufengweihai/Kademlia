@@ -12,6 +12,7 @@ import com.zf.kademlia.node.Node;
 public class KBucket implements Serializable {
 	private static final long serialVersionUID = -6246209996380143057L;
 	private List<Node> contacts = new ArrayList<Node>(Commons.K);
+	private long lastRefresh = 0;
 
 	public void addNode(Node node) {
 		contacts.add(node);
@@ -34,6 +35,10 @@ public class KBucket implements Serializable {
 		} finally {
 			lock.unlock();
 		}
+	}
+
+	public boolean isOld() {
+		return System.currentTimeMillis() - lastRefresh >= Commons.TIME_INTERVAL * 60 * 1000;
 	}
 
 	@Override

@@ -11,12 +11,13 @@ public interface Commons {
 	int TIMEOUT = 3000;
 
 	int PORT = 19683;
-	
+
 	int CODE_BOOTSTRAP = 0x032D;
-	byte CODE_PING = 0x001A;
-	byte CODE_STORE = 0x003A;
-	byte CODE_FIND_NODE = 0x05A;
-	byte CODE_FIND_VALUE = 0x07A;
-	
-	
+	byte CODE_PING = 'P';
+	byte CODE_STORE = 'S';
+	byte CODE_FIND_NODE = 'N';
+	byte CODE_FIND_VALUE = 'V';
+
+	int TIME_INTERVAL = 15;// ∑÷÷”
+
 }

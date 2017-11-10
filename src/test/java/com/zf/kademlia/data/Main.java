@@ -23,10 +23,17 @@ public class Main {
 		//
 		// System.out.println(foo21);
 		// ois.close();
-		byte[] bytes = new byte[20];
-		SecureRandom instanceStrong = SecureRandom.getInstanceStrong();
-		instanceStrong.nextBytes(bytes);
-		System.out.print(bytes.hashCode());
+		// byte[] bytes = new byte[20];
+		// SecureRandom instanceStrong = SecureRandom.getInstanceStrong();
+		// instanceStrong.nextBytes(bytes);
+		// System.out.print(bytes.hashCode());
+
+		short s = Short.MIN_VALUE;
+		for (int i = 0; i < 65537; i++) {
+			s++;
+
+		}
+		System.out.print(System.currentTimeMillis());
 	}
 }
 
