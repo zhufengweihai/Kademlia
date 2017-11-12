@@ -14,7 +14,7 @@ import com.zf.kademlia.common.Commons;
 import com.zf.kademlia.data.DataOperator;
 import com.zf.kademlia.encryption.CryptoProvider;
 import com.zf.kademlia.encryption.impl.CryptoProviderImpl;
-import com.zf.kademlia.node.Node;
+import com.zf.kademlia.routing.Contact;
 import com.zf.kademlia.routing.RoutingTable;
 
 public class DataOperatorImpl implements DataOperator {
@@ -40,15 +40,15 @@ public class DataOperatorImpl implements DataOperator {
 	}
 
 	@Override
-	public List<Node> readBootstraps() {
+	public List<Contact> readBootstraps() {
 		try {
 			byte[] data = FileUtils.readFileToByteArray(new File(Commons.PATH_BOOTSTRAP));
 			CryptoProvider cryptoProvider = new CryptoProviderImpl();
-			return (List<Node>) SerializationUtils.deserialize(cryptoProvider.decrypt(data));
+			return (List<Contact>) SerializationUtils.deserialize(cryptoProvider.decrypt(data));
 		} catch (IOException e) {
 			LOGGER.error("Failed to read Bootstraps", e);
 		}
-		return new ArrayList<Node>();
+		return new ArrayList<Contact>();
 
 	}
 

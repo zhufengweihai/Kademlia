@@ -1,13 +1,12 @@
 package com.zf.kademlia.data;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
+import java.util.Arrays;
+
+import org.apache.commons.lang.RandomStringUtils;
 
 public class Main {
 	public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchAlgorithmException {
@@ -28,12 +27,13 @@ public class Main {
 		// instanceStrong.nextBytes(bytes);
 		// System.out.print(bytes.hashCode());
 
-		short s = Short.MIN_VALUE;
-		for (int i = 0; i < 65537; i++) {
-			s++;
-
-		}
-		System.out.print(System.currentTimeMillis());
+		MessageDigest md = MessageDigest.getInstance("SHA1");
+		String random = RandomStringUtils.random(10);
+		System.out.println(random);
+		md.update(random.getBytes());
+		byte[] bits = md.digest();
+		System.out.println(bits.length);
+		System.out.println(Arrays.toString(bits));
 	}
 }
 

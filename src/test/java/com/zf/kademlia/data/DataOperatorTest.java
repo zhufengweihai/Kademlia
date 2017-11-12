@@ -17,8 +17,8 @@ import com.zf.kademlia.common.Commons;
 import com.zf.kademlia.data.impl.DataOperatorImpl;
 import com.zf.kademlia.encryption.CryptoProvider;
 import com.zf.kademlia.encryption.impl.CryptoProviderImpl;
-import com.zf.kademlia.node.Node;
 import com.zf.kademlia.routing.KBucket;
+import com.zf.kademlia.routing.Contact;
 import com.zf.kademlia.routing.RoutingTable;
 
 public class DataOperatorTest {
@@ -30,7 +30,7 @@ public class DataOperatorTest {
 			for (int i = 0; i < Commons.ID_LENGTH; i++) {
 				KBucket bucket = new KBucket();
 				for (int j = 0; j <= RandomUtils.nextInt(5); j++) {
-					Node node = Node.createNode("192.168.0.1", 10000);
+					Contact node = Contact.createNode("192.168.0.1", 10000);
 					bucket.addNode(node);
 				}
 				routingTable.addBucket(bucket);
@@ -56,9 +56,9 @@ public class DataOperatorTest {
 	public void testReadBootstrap() {
 		try {
 			DataOperator operator = new DataOperatorImpl();
-			List<Node> nodes = new ArrayList<>();
+			List<Contact> nodes = new ArrayList<>();
 			for (int j = 0; j <= RandomUtils.nextInt(5); j++) {
-				Node node = Node.createNode("192.168.0.1", 10000);
+				Contact node = Contact.createNode("192.168.0.1", 10000);
 				;
 				nodes.add(node);
 			}
@@ -67,7 +67,7 @@ public class DataOperatorTest {
 			CryptoProvider cryptoProvider = new CryptoProviderImpl();
 			FileUtils.writeByteArrayToFile(new File(Commons.PATH_BOOTSTRAP), cryptoProvider.encrypt(data));
 
-			List<Node> bootstraps = operator.readBootstraps();
+			List<Contact> bootstraps = operator.readBootstraps();
 			System.out.println(bootstraps);
 			assertTrue(true);
 		} catch (IOException e) {

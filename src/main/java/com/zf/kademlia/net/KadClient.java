@@ -10,13 +10,13 @@ import org.apache.mina.transport.socket.nio.NioDatagramConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.zf.kademlia.node.Node;
+import com.zf.kademlia.routing.Contact;
 
 public class KadClient extends IoHandlerAdapter {
 	private static Logger logger = LoggerFactory.getLogger(KadClient.class);
 
 	private IoConnector connector;
-	public KadClient(Node node) {
+	public KadClient(Contact node) {
 		connector = new NioDatagramConnector();
 		connector.setHandler(this);
 		ConnectFuture connFuture = connector.connect(new InetSocketAddress(node.getIp(), node.getPort()));

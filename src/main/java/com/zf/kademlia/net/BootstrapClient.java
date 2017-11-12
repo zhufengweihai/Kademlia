@@ -14,14 +14,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.zf.kademlia.common.Commons;
-import com.zf.kademlia.node.Node;
+import com.zf.kademlia.routing.Contact;
 
 public class BootstrapClient extends IoHandlerAdapter {
 	private final static Logger LOGGER = LoggerFactory.getLogger(BootstrapClient.class);
 	private IoSession session;
 	private IoConnector connector;
 
-	private boolean bootstrap(Node node) {
+	private boolean bootstrap(Contact node) {
 		connector = new NioDatagramConnector();
 		connector.setHandler(this);
 		ConnectFuture connFuture = connector.connect(new InetSocketAddress(node.getIp(), node.getPort()));

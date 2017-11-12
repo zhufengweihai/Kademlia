@@ -3,7 +3,7 @@ package com.zf.kademlia.data;
 import java.io.IOException;
 import java.util.List;
 
-import com.zf.kademlia.node.Node;
+import com.zf.kademlia.routing.Contact;
 import com.zf.kademlia.routing.RoutingTable;
 
 public interface DataOperator {
@@ -11,5 +11,5 @@ public interface DataOperator {
 
 	RoutingTable readRoutingTable();
 
-	List<Node> readBootstraps();
+	List<Contact> readBootstraps();
 }

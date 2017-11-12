@@ -3,9 +3,9 @@ package com.zf.kademlia;
 import java.io.Serializable;
 import java.util.List;
 
-import com.zf.kademlia.node.Node;
+import com.zf.kademlia.routing.Contact;
 
 public class KadConfig implements Serializable {
-	private Node localNode = null;
-	private List<Node> nodes = null;
+	private Contact localNode = null;
+	private List<Contact> nodes = null;
 }

@@ -7,14 +7,13 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.zf.kademlia.common.Commons;
-import com.zf.kademlia.node.Node;
 
 public class KBucket implements Serializable {
 	private static final long serialVersionUID = -6246209996380143057L;
-	private List<Node> contacts = new ArrayList<Node>(Commons.K);
+	private List<Contact> contacts = new ArrayList<Contact>(Commons.K);
 	private long lastRefresh = 0;
 
-	public void addNode(Node node) {
+	public void addNode(Contact node) {
 		contacts.add(node);
 	}
 
@@ -23,7 +22,7 @@ public class KBucket implements Serializable {
 	 * 
 	 * @param node
 	 */
-	public void update(Node node) {
+	public void update(Contact node) {
 		Lock lock = new ReentrantLock();
 		lock.lock();
 		try {

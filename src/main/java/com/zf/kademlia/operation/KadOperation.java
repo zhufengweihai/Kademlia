@@ -2,18 +2,18 @@ package com.zf.kademlia.operation;
 
 import java.util.List;
 
-import com.zf.kademlia.node.Node;
+import com.zf.kademlia.routing.Contact;
 
 public class KadOperation {
-	public boolean ping(Node node) {
+	public boolean ping(Contact node) {
 		return false;
 	}
 
-	public void store(Node node) {
+	public void store(Contact node) {
 
 	}
 
-	public List<Node> findNode(Node node) {
+	public List<Contact> findNode(Contact node) {
 		return null;
 	}
 }

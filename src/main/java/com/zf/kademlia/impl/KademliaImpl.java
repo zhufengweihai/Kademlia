@@ -10,7 +10,7 @@ import com.zf.kademlia.common.Commons;
 import com.zf.kademlia.data.DataOperator;
 import com.zf.kademlia.data.impl.DataOperatorImpl;
 import com.zf.kademlia.net.KadServer;
-import com.zf.kademlia.node.Node;
+import com.zf.kademlia.routing.Contact;
 import com.zf.kademlia.routing.RoutingTable;
 
 public class KademliaImpl implements Kademlia {
@@ -26,8 +26,8 @@ public class KademliaImpl implements Kademlia {
 		DataOperator operator = new DataOperatorImpl();
 		RoutingTable routingTable = operator.readRoutingTable();
 		if (routingTable.isEmpty()) {
-			routingTable.setLocalNode(Node.createNode(kadServer.getIP(), Commons.PORT));
-			List<Node> bootstraps = operator.readBootstraps();
+			routingTable.setLocalNode(Contact.createNode(kadServer.getIP(), Commons.PORT));
+			List<Contact> bootstraps = operator.readBootstraps();
 			if (bootstraps.isEmpty()) {
 				return false;
 			}

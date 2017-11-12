@@ -5,12 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.zf.kademlia.common.Commons;
-import com.zf.kademlia.node.Node;
 
 public class RoutingTable implements Serializable {
 	private static final long serialVersionUID = 5880872114220832106L;
 
-	private Node localNode = null;
+	private Contact localNode = null;
 	private List<KBucket> buckets = new ArrayList<>(Commons.ID_LENGTH);
 
 	public RoutingTable() {
@@ -19,7 +18,7 @@ public class RoutingTable implements Serializable {
 		}
 	}
 
-	public RoutingTable(Node localNode) {
+	public RoutingTable(Contact localNode) {
 		this();
 		this.localNode = localNode;
 	}
@@ -36,19 +35,19 @@ public class RoutingTable implements Serializable {
 		return buckets.isEmpty();
 	}
 
-	public void addNodes(List<Node> nodes) {
-		for (Node node : nodes) {
+	public void addNodes(List<Contact> nodes) {
+		for (Contact node : nodes) {
 			byte[] distance = localNode.distance(node);
 			int index = KBucket.getBucketIndex(distance);
 			buckets.get(index).addNode(node);
 		}
 	}
 
-	public Node getLocalNode() {
+	public Contact getLocalNode() {
 		return localNode;
 	}
 
-	public void setLocalNode(Node localNode) {
+	public void setLocalNode(Contact localNode) {
 		this.localNode = localNode;
 	}
 

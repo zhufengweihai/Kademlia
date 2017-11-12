@@ -1,72 +1,54 @@
 package com.zf.kademlia.node;
 
-import java.io.Serializable;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import com.zf.kademlia.common.Commons;
+import com.zf.kademlia.routing.Contact;
+import com.zf.kademlia.routing.KBucket;
+import com.zf.kademlia.routing.RoutingTable;
 
-public class Node implements Serializable {
-	private static final long serialVersionUID = -1381143309364805779L;
+public class Node {
+	private RoutingTable routingTable = null;
 
-	private byte[] id = null;
-	private String ip = null;
-	private int port = -1;
-
-	public Node() {
+	public Node(RoutingTable routingTable) {
+		this.routingTable = routingTable;
+		startSelfRefresh();
 	}
 
-	public Node(byte[] id, String ip, int port) {
-		this.id = id;
-		this.ip = ip;
-		this.port = port;
+	public void findNode(Contact contact) {
+
 	}
 
-	public byte[] getId() {
-		return id;
-	}
-
-	public void setId(byte[] id) {
-		this.id = id;
-	}
-
-	public String getIp() {
-		return ip;
-	}
-
-	public void setIp(String ip) {
-		this.ip = ip;
-	}
-
-	public int getPort() {
-		return port;
-	}
-
-	public void setPort(int port) {
-		this.port = port;
-	}
-
-	public byte[] distance(Node other) {
-		byte[] distance = new byte[Commons.ID_LENGTH / 8];
-		for (int i = 0; i < id.length; i++) {
-			distance[i] = (byte) (id[i] ^ other.id[i]);
-		}
-		return distance;
-	}
-
-	@Override
-	public String toString() {
-		return "Node [id=" + Arrays.toString(id) + ", ip=" + ip + ", port=" + port + "]";
-	}
-
-	public static Node createNode(String ip, int port) {
-		byte[] id = new byte[Commons.ID_LENGTH / 8];
+	public void findValue(Contact contact) {
 		try {
-			SecureRandom.getInstance("SHA1PRNG").nextBytes(id);
+			MessageDigest md5=MessageDigest.getInstance("MD5");
 		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return new Node(id, ip, port);
+	}
+	
+	private void startSelfRefresh() {
+		ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+		service.scheduleAtFixedRate(createRreshTask(), Commons.TIME_INTERVAL, Commons.TIME_INTERVAL, TimeUnit.MINUTES);
+	}
+
+	private Runnable createRreshTask() {
+		return new Runnable() {
+			public void run() {
+				List<KBucket> buckets = routingTable.getBuckets();
+				for (KBucket bucket : buckets) {
+					if (bucket.isOld()) {
+
+					}
+				}
+
+			}
+		};
 	}
 }
