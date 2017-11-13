@@ -21,7 +21,7 @@ public class Node {
 	}
 
 	public void findNode(Contact contact) {
-
+		List<Contact> nearbyContacts = routingTable.getNearbyContacts(contact);
 	}
 
 	public void findValue(Contact contact) {

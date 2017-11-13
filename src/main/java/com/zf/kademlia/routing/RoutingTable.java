@@ -51,6 +51,19 @@ public class RoutingTable implements Serializable {
 		this.localNode = localNode;
 	}
 
+	public List<Contact> getNearbyContacts(Contact target) {
+		TopKDistanceQueue queue = new TopKDistanceQueue(Commons.K);
+		for (KBucket bucket : buckets) {
+			List<Contact> contacts = bucket.getContacts();
+			for (Contact contact : contacts) {
+				queue.add(new TopKDistanceQueue.DistanceOrder(target, contact));
+			}
+		}
+
+		return queue.getResults();
+
+	}
+
 	@Override
 	public String toString() {
 		return "RoutingTable [buckets=" + buckets + "]";

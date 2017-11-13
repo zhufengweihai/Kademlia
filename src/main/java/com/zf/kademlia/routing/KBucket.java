@@ -17,6 +17,10 @@ public class KBucket implements Serializable {
 		contacts.add(node);
 	}
 
+	public List<Contact> getContacts() {
+		return contacts;
+	}
+
 	/**
 	 * 更新K桶 如果新的节点已经存在于这个K桶中，则把对应项移到该该K桶的尾部
 	 * 
