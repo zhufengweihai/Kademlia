@@ -16,6 +16,7 @@ public class KadClient extends IoHandlerAdapter {
 	private static Logger logger = LoggerFactory.getLogger(KadClient.class);
 
 	private IoConnector connector;
+
 	public KadClient(Contact node) {
 		connector = new NioDatagramConnector();
 		connector.setHandler(this);
@@ -26,7 +27,6 @@ public class KadClient extends IoHandlerAdapter {
 
 	@Override
 	public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
-		session.closeNow();
 		logger.error("sockect error", cause);
 	}
 
