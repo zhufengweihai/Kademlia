@@ -24,8 +24,9 @@ dependencies {
     compile 'org.apache.mina:mina-core:2.0.16'
     compile 'org.apache.mina:mina-filter-compression:2.0.16'
     compile 'org.apache.mina:mina-transport-apr:2.0.16'
-    compile 'commons-lang:commons-lang:2.6'
-    compile 'commons-io:commons-io:2.6'
+    
+    compileOnly 'org.projectlombok:lombok:1.16.18'
+    //annotationProcessor "org.projectlombok:lombok:1.16.18"
     // Declare the dependency for your favourite test framework you want to use in your tests.
     // TestNG is also supported by the Gradle Test task. Just change the
     // testCompile dependency to testCompile 'org.testng:testng:6.8.1' and add

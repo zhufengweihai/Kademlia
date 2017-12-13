@@ -6,8 +6,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
-import org.apache.commons.lang.RandomStringUtils;
-
 public class Main {
 	public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchAlgorithmException {
 		// ObjectOutputStream oos = new ObjectOutputStream(new
@@ -28,7 +26,7 @@ public class Main {
 		// System.out.print(bytes.hashCode());
 
 		MessageDigest md = MessageDigest.getInstance("SHA1");
-		String random = RandomStringUtils.random(10);
+		String random = null;
 		System.out.println(random);
 		md.update(random.getBytes());
 		byte[] bits = md.digest();

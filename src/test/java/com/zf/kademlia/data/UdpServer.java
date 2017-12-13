@@ -31,119 +31,106 @@ import org.apache.mina.transport.socket.nio.NioDatagramAcceptor;
 /**
  * An UDP server used for performance tests.
  * 
- * It does nothing fancy, except receiving the messages, and counting the number of
- * received messages.
+ * It does nothing fancy, except receiving the messages, and counting the number
+ * of received messages.
  * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public class UdpServer extends IoHandlerAdapter {
-    /** The listening port (check that it's not already in use) */
-    public static final int PORT = 18567;
+	/** The listening port (check that it's not already in use) */
+	public static final int PORT = 18567;
 
-    /** The number of message to receive */
-    public static final int MAX_RECEIVED = 100000;
+	/** The number of message to receive */
+	public static final int MAX_RECEIVED = 100000;
 
-    /** The starting point, set when we receive the first message */
-    private static long t0;
+	/** The starting point, set when we receive the first message */
+	private static long t0;
 
-    /** A counter incremented for every recieved message */
-    private AtomicInteger nbReceived = new AtomicInteger(0);
+	/** A counter incremented for every recieved message */
+	private AtomicInteger nbReceived = new AtomicInteger(0);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
-        cause.printStackTrace();
-        session.closeNow();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
+		cause.printStackTrace();
+		session.closeNow();
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void messageReceived(IoSession session, Object message) throws Exception {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void messageReceived(IoSession session, Object message) throws Exception {
+		System.out.println("server:" + message);
+		session.write(message);
+	}
 
-        int nb = nbReceived.incrementAndGet();
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void sessionClosed(IoSession session) throws Exception {
+		System.out.println("Session closed...");
 
-        if (nb == 1) {
-            t0 = System.currentTimeMillis();
-        }
+		// Reinitialize the counter and expose the number of received messages
+		System.out.println("Nb message received : " + nbReceived.get());
+		nbReceived.set(0);
+	}
 
-        if (nb == MAX_RECEIVED) {
-            long t1 = System.currentTimeMillis();
-            System.out.println("-------------> end " + (t1 - t0));
-        }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void sessionCreated(IoSession session) throws Exception {
+		System.out.println("Session created...");
+	}
 
-        if (nb % 10000 == 0) {
-            System.out.println("Received " + nb + " messages");
-        }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void sessionIdle(IoSession session, IdleStatus status) throws Exception {
+		System.out.println("Session idle...");
+	}
 
-        // If we want to test the write operation, uncomment this line
-        session.write(message);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void sessionOpened(IoSession session) throws Exception {
+		System.out.println("Session Opened...");
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void sessionClosed(IoSession session) throws Exception {
-        System.out.println("Session closed...");
+	/**
+	 * Create the UDP server
+	 * 
+	 * @throws IOException
+	 *             If something went wrong
+	 */
+	public UdpServer() throws IOException {
+		NioDatagramAcceptor acceptor = new NioDatagramAcceptor();
+		acceptor.setHandler(this);
 
-        // Reinitialize the counter and expose the number of received messages
-        System.out.println("Nb message received : " + nbReceived.get());
-        nbReceived.set(0);
-    }
+		// The logger, if needed. Commented atm
+		// DefaultIoFilterChainBuilder chain = acceptor.getFilterChain();
+		// chain.addLast("logger", new LoggingFilter());
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void sessionCreated(IoSession session) throws Exception {
-        System.out.println("Session created...");
-    }
+		acceptor.bind(new InetSocketAddress(PORT));
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void sessionIdle(IoSession session, IdleStatus status) throws Exception {
-        System.out.println("Session idle...");
-    }
+		System.out.println("Server started...");
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void sessionOpened(IoSession session) throws Exception {
-        System.out.println("Session Opened...");
-    }
-
-    /**
-     * Create the UDP server
-     * 
-     * @throws IOException If something went wrong
-     */
-    public UdpServer() throws IOException {
-        NioDatagramAcceptor acceptor = new NioDatagramAcceptor();
-        acceptor.setHandler(this);
-
-        // The logger, if needed. Commented atm
-        //DefaultIoFilterChainBuilder chain = acceptor.getFilterChain();
-        //chain.addLast("logger", new LoggingFilter());
-
-        acceptor.bind(new InetSocketAddress(PORT));
-
-        System.out.println("Server started...");
-    }
-
-    /**
-     * The entry point.
-     * 
-     * @param args The arguments
-     * @throws IOException If something went wrong
-     */
-    public static void main(String[] args) throws IOException {
-        new UdpServer();
-    }
+	/**
+	 * The entry point.
+	 * 
+	 * @param args
+	 *            The arguments
+	 * @throws IOException
+	 *             If something went wrong
+	 */
+	public static void main(String[] args) throws IOException {
+		new UdpServer();
+	}
 }
