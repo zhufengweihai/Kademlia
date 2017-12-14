@@ -1,7 +1,6 @@
 package com.zf.kademlia.protocol;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -139,7 +138,7 @@ public class Codec {
 		buffer.put(msg.getOrigin().toString().getBytes());
 	}
 
-	public IoBuffer encode(KadMessage msg) throws UnsupportedEncodingException {
+	public IoBuffer encode(KadMessage msg) {
 		if (msg instanceof ValueReply) {
 			return encode((ValueReply) msg);
 		} else if (msg instanceof FindNode) {
@@ -156,8 +155,7 @@ public class Codec {
 			return encode((Ping) msg);
 		} else if (msg instanceof Pong) {
 			return encode((Pong) msg);
-		} else {
-			throw new UnsupportedEncodingException("Unknown msg type:" + msg);
 		}
+		return null;
 	}
 }

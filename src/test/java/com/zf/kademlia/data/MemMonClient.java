@@ -40,6 +40,7 @@ public class MemMonClient extends IoHandlerAdapter {
 	public MemMonClient() {
 		connector = new NioDatagramConnector();
 		connector.setHandler(this);
+		connector.setConnectTimeoutMillis(0);
 		Runtime.getRuntime().addShutdownHook(new Thread(connector::dispose));
 
 		ConnectFuture connFuture = connector.connect(new InetSocketAddress("localhost", UdpServer.PORT));

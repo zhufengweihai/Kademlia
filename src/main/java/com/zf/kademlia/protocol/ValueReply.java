@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * FIND_VALUE的回应
+ * FIND_VALUE响应
  *
  * @author zhufeng7
  * @date 2017-11-29.
