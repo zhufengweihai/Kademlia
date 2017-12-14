@@ -2,15 +2,19 @@ package com.zf.kademlia.protocol;
 
 import com.zf.kademlia.node.Node;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author zhufeng7
  * @date 2017-11-29.
  */
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
 public abstract class KadMessage {
-    private final MessageType type;
-    private final long seqId;
-    private final Node origin;
+	private MessageType type;
+	private long seqId;
+	private Node origin;
 }

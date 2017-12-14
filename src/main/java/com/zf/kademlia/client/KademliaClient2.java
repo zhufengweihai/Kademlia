@@ -32,23 +32,24 @@ public class KademliaClient2 extends IoHandlerAdapter {
 	private Map<IoSession, Long> sessionMap = new HashMap<>();
 
 	public KademliaClient2() {
-		init();
-	}
-
-	private void init() {
-		connector.setHandler(this);connector.setConnectTimeoutMillis(0);
+		connector.setHandler(this);
 		Runtime.getRuntime().addShutdownHook(new Thread(connector::dispose));
 	}
 
 	public void sessionIdle(IoSession session, IdleStatus status) {
 		if (status == IdleStatus.BOTH_IDLE) {
 			session.closeNow();
+			BaseOperation operation = operationMap.get(sessionMap.getOrDefault(session, 0l));
+			if( operation!=null){
+				
+			}
+			
 		}
 	}
 
 	@Override
-	public void sessionClosed(IoSession session) throws Exception {
-		System.exit(0);
+	public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
+
 	}
 
 	@Override
@@ -59,12 +60,15 @@ public class KademliaClient2 extends IoHandlerAdapter {
 
 	public void send(Node node, KadMessage msg, BaseOperation operation) {
 		operationMap.put(msg.getSeqId(), operation);
-		ConnectFuture connFuture = connector.connect(new InetSocketAddress(node.getIp(), node.getPort()));
+		InetSocketAddress address = new InetSocketAddress(node.getIp(), node.getPort());
+		ConnectFuture connFuture = connector.connect(address);
 		connFuture.awaitUninterruptibly();
-		sessionMap.put(connFuture.getSession(), msg.getSeqId());
+
+		IoSession session = connFuture.getSession();
+		sessionMap.put(session, msg.getSeqId());
 		int networkTimeout = KadDataManager.instance().getConfig().getNetworkTimeout();
-		connFuture.getSession().getConfig().setIdleTime(IdleStatus.BOTH_IDLE, networkTimeout);
-		connFuture.getSession().write(codec.encode(msg));
+		session.getConfig().setIdleTime(IdleStatus.BOTH_IDLE, networkTimeout);
+		session.write(codec.encode(msg));
 	}
 
 	public void close() {

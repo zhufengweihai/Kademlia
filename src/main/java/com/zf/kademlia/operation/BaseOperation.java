@@ -5,6 +5,7 @@ import com.zf.kademlia.client.KademliaClient;
 import com.zf.kademlia.node.Node;
 import com.zf.kademlia.protocol.KadMessage;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -15,20 +16,20 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@RequiredArgsConstructor
+@AllArgsConstructor
 public abstract class BaseOperation {
-    final Node node;
+	Node node;
 
-    public abstract KadMessage createMessage();
+	public abstract KadMessage createMessage();
 
-    public void execute() {
-        KademliaClient.instance().send(node, createMessage(), this);
-    }
+	public void execute() {
+		KademliaClient.instance().send(node, createMessage(), this);
+	}
 
-    public void onResponse(KadMessage message) {
-    }
+	public void onResponse(KadMessage message) {
+	}
 
-    public void onFailed(Node node) {
-        KadDataManager.instance().getRoutingTable().retireNode(node);
-    }
+	public void onFailed(Node node) {
+		KadDataManager.instance().getRoutingTable().retireNode(node);
+	}
 }
