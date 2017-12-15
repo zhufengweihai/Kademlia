@@ -6,42 +6,41 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import de.cgrotz.kademlia.node.Key;
-import de.cgrotz.kademlia.storage.Value;
+import com.zf.kademlia.node.Key;
 
 /**
- * Created by zhufeng7 on 2017-11-24.
+ * @author zhufeng
+ * @date 2017-12-15
  */
-
 public class ValueTable {
-    private final ConcurrentHashMap<Key, Value> map = new ConcurrentHashMap<>();
+	private ConcurrentHashMap<Key, Value> map = new ConcurrentHashMap<>();
 
-    public void put(Key key, Value value) {
-        map.put(key, value);
-    }
+	public void put(Key key, Value value) {
+		map.put(key, value);
+	}
 
-    public Value get(Key key) {
-        return map.get(key);
-    }
+	public Value get(Key key) {
+		return map.get(key);
+	}
 
-    public boolean contains(Key key) {
-        return map.containsKey(key);
-    }
+	public boolean contains(Key key) {
+		return map.containsKey(key);
+	}
 
-    public void updateLastPublished(Key key, long timestamp) {
-        Value node = get(key);
-        node.setLastPublished(timestamp);
-        put(key, node);
-    }
+	public void updateLastPublished(Key key, long timestamp) {
+		Value node = get(key);
+		node.setLastPublished(timestamp);
+		put(key, node);
+	}
 
-    public List<Key> getKeysBeforeTimestamp(long timestamp) {
-        List<Key> keys = new ArrayList<>();
-        Set<Map.Entry<Key, Value>> entries = map.entrySet();
-        for (Map.Entry<Key, Value> entry : entries) {
-            if (entry.getValue().getLastPublished() <= timestamp) {
-                keys.add(entry.getKey());
-            }
-        }
-        return keys;
-    }
+	public List<Key> getKeysBeforeTimestamp(long timestamp) {
+		List<Key> keys = new ArrayList<>();
+		Set<Map.Entry<Key, Value>> entries = map.entrySet();
+		for (Map.Entry<Key, Value> entry : entries) {
+			if (entry.getValue().getLastPublished() <= timestamp) {
+				keys.add(entry.getKey());
+			}
+		}
+		return keys;
+	}
 }
