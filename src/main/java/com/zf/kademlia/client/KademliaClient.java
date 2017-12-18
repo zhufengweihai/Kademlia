@@ -21,12 +21,14 @@ import com.zf.kademlia.protocol.KadMessage;
  * @date 2017-12-13.
  */
 public class KademliaClient extends IoHandlerAdapter {
-	private static final String ATTR_OPERATION = "operation";
+	private static final String ATTR_LISTENER = "listener";
 	private static final String ATTR_NODE = "node";
+	private static KademliaClient instance = new KademliaClient();
+
 	private IoConnector connector = new NioDatagramConnector();
 	private Codec codec = new Codec();
 
-	public KademliaClient() {
+	private KademliaClient() {
 		connector.setHandler(this);
 		Runtime.getRuntime().addShutdownHook(new Thread(connector::dispose));
 	}
@@ -34,30 +36,35 @@ public class KademliaClient extends IoHandlerAdapter {
 	public void sessionIdle(IoSession session, IdleStatus status) {
 		if (status == IdleStatus.BOTH_IDLE) {
 			session.closeNow();
-			((BaseOperation) session.getAttribute(ATTR_OPERATION)).onFailed((Node) session.getAttribute(ATTR_NODE));
+			KadResponseListener listener = (KadResponseListener) session.getAttribute(ATTR_LISTENER);
+			listener.onFailed((Node) session.getAttribute(ATTR_NODE));
 		}
 	}
 
 	@Override
 	public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
-		((BaseOperation) session.getAttribute(ATTR_OPERATION)).onFailed((Node) session.getAttribute(ATTR_NODE));
+		((BaseOperation) session.getAttribute(ATTR_LISTENER)).onFailed((Node) session.getAttribute(ATTR_NODE));
 	}
 
 	@Override
 	public void messageReceived(IoSession session, Object message) throws Exception {
 		session.closeNow();
 		KadMessage kadMessage = codec.decode((IoBuffer) message);
-		((BaseOperation) session.getAttribute(ATTR_OPERATION)).onResponse(kadMessage);
+		((BaseOperation) session.getAttribute(ATTR_LISTENER)).onResponse(kadMessage);
 	}
 
-	public void send(Node node, KadMessage msg, BaseOperation operation) {
+	public static void sendMessage(Node node, KadMessage msg, KadResponseListener listener) {
+		instance.send(node, msg, listener);
+	}
+
+	private void send(Node node, KadMessage msg, KadResponseListener listener) {
 		InetSocketAddress address = new InetSocketAddress(node.getIp(), node.getPort());
 		ConnectFuture connFuture = connector.connect(address);
 		connFuture.awaitUninterruptibly();
 
 		IoSession session = connFuture.getSession();
 		session.setAttribute(ATTR_NODE, node);
-		session.setAttribute(ATTR_OPERATION, operation);
+		session.setAttribute(ATTR_LISTENER, listener);
 		int networkTimeout = KadDataManager.instance().getConfig().getNetworkTimeout();
 		session.getConfig().setIdleTime(IdleStatus.BOTH_IDLE, networkTimeout);
 		session.write(codec.encode(msg));

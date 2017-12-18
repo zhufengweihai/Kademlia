@@ -20,30 +20,29 @@ public class Codec {
 	public KadMessage decode(IoBuffer buffer) throws IOException {
 		String message = buffer.getString(Charset.forName("UTF-8").newDecoder());
 		String[] parts = message.split("\\|");
-		long seqId = Long.parseLong(parts[1]);
-		Node origin = decodeNode(parts[2]);
+		Node origin = decodeNode(parts[1]);
 
 		if (parts[0].equals(MessageType.FIND_NODE.name())) {
-			return new FindNode(seqId, origin, Key.build(parts[3]));
+			return new FindNode(origin, Key.build(parts[2]));
 		} else if (parts[0].equals(MessageType.PING.name())) {
-			return new Ping(seqId, origin);
+			return new Ping(origin);
 		} else if (parts[0].equals(MessageType.PONG.name())) {
-			return new Pong(seqId, origin);
+			return new Pong(origin);
 		} else if (parts[0].equals(MessageType.NODE_REPLY.name())) {
 			List<Node> nodes = new ArrayList<>();
-			for (int i = 3; i < parts.length; i++) {
+			for (int i = 2; i < parts.length; i++) {
 				nodes.add(decodeNode(parts[i]));
 			}
-			return new NodeReply(seqId, origin, nodes);
+			return new NodeReply(origin, nodes);
 		} else if (parts[0].equals(MessageType.STORE.name())) {
-			String value = new String(Base64.decodeBase64(parts[4].getBytes()), Charset.forName("UTF-8"));
-			return new Store(seqId, origin, Key.build(parts[3]), value);
+			String value = new String(Base64.decodeBase64(parts[3].getBytes()), Charset.forName("UTF-8"));
+			return new Store(origin, Key.build(parts[2]), value);
 		} else if (parts[0].equals(MessageType.STORE_REPLY.name())) {
-			return new StoreReply(seqId, origin);
+			return new StoreReply(origin);
 		} else if (parts[0].equals(MessageType.FIND_VALUE.name())) {
-			return new FindValue(seqId, origin, Key.build(parts[3]));
+			return new FindValue(origin, Key.build(parts[2]));
 		} else if (parts[0].equals(MessageType.VALUE_REPLY.name())) {
-			return new ValueReply(seqId, origin, Key.build(parts[3]), parts[4]);
+			return new ValueReply(origin, Key.build(parts[2]), parts[3]);
 		} else {
 			System.out.println("Can't decode message_type=" + parts[0]);
 			throw new RuntimeException("Unknown message type=" + parts[0] + " message=" + Arrays.toString(parts));
@@ -76,7 +75,7 @@ public class Codec {
 		IoBuffer buffer = IoBuffer.allocate(10);
 		encodeHeader(buffer, msg);
 		buffer.putChar('|');
-		buffer.put(msg.getLookupId().toString().getBytes());
+		buffer.put(msg.getFindKey().toString().getBytes());
 		buffer.flip();
 		return buffer;
 	}
@@ -132,8 +131,6 @@ public class Codec {
 
 	private void encodeHeader(IoBuffer buffer, KadMessage msg) {
 		buffer.put(msg.getType().name().getBytes());
-		buffer.putChar('|');
-		buffer.putLong(msg.getSeqId());
 		buffer.putChar('|');
 		buffer.put(msg.getOrigin().toString().getBytes());
 	}

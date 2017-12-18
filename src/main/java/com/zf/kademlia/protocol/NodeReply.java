@@ -1,8 +1,8 @@
 package com.zf.kademlia.protocol;
 
-import com.zf.kademlia.node.Node;
-
 import java.util.List;
+
+import com.zf.kademlia.node.Node;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,10 +16,10 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class NodeReply extends KadMessage {
-    private List<Node> nodes;
+	private List<Node> nodes;
 
-    public NodeReply(long seqId, Node origin, List<Node> nodes) {
-        super(MessageType.NODE_REPLY, seqId, origin);
-        this.nodes = nodes;
-    }
+	public NodeReply(Node origin, List<Node> nodes) {
+		super(MessageType.NODE_REPLY, origin);
+		this.nodes = nodes;
+	}
 }

@@ -17,10 +17,10 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class FindValue extends KadMessage {
-    private final Key key;
+	private final Key key;
 
-    public FindValue(long seqId, Node origin, Key key) {
-        super(MessageType.FIND_VALUE, seqId, origin);
-        this.key = key;
-    }
+	public FindValue(Node origin, Key key) {
+		super(MessageType.FIND_VALUE, origin);
+		this.key = key;
+	}
 }

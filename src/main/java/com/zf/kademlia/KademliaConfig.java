@@ -15,4 +15,5 @@ public class KademliaConfig {
 	private int networkTimeout = 5000;
 	private int retriesCount = 2;
 	private int retryInterval = 1000;
+	private int refreshInterval = 60 * 60 * 1000;
 }

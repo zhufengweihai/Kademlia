@@ -17,12 +17,12 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class ValueReply extends KadMessage {
-    private final String value;
-    private final Key key;
+	private final String value;
+	private final Key key;
 
-    public ValueReply(long seqId, Node origin, Key key, String value) {
-        super(MessageType.VALUE_REPLY, seqId, origin);
-        this.key = key;
-        this.value = value;
-    }
+	public ValueReply(Node origin, Key key, String value) {
+		super(MessageType.VALUE_REPLY, origin);
+		this.key = key;
+		this.value = value;
+	}
 }

@@ -15,6 +15,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public abstract class KadMessage {
 	private MessageType type;
-	private long seqId;
+	//private long seqId;
 	private Node origin;
 }

@@ -17,7 +17,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 public class Ping extends KadMessage {
 
-    public Ping(long seqId, Node origin) {
-        super(MessageType.PING, seqId, origin);
-    }
+	public Ping(Node origin) {
+		super(MessageType.PING, origin);
+	}
 }
