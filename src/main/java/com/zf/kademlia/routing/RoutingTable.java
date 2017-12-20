@@ -16,19 +16,19 @@ import lombok.ToString;
  */
 @ToString
 public class RoutingTable {
-	private final Bucket[] buckets;
+	private final BucketProxy[] buckets;
 
 	public RoutingTable() {
-		buckets = new Bucket[Key.ID_LENGTH];
+		buckets = new BucketProxy[Key.ID_LENGTH];
 		for (int i = 0; i < Key.ID_LENGTH; i++) {
-			buckets[i] = new Bucket(i);
+			buckets[i] = new BucketProxy(i);
 		}
 	}
 
 	/**
 	 * 计算给定节点应放置的桶ID; bucketId是根据多远的距离来计算的节点远离本地节点。
 	 */
-	public final int getBucketId(Key nid) {
+	public int getBucketId(Key nid) {
 		int bId = KadDataManager.instance().getLocalNode().getId().getDistance(nid) - 1;
 		// 如果我们试图将一个节点插入到它自己的路由表中，那么存储区ID将是-1，所以将其设置为0桶
 		return bId < 0 ? 0 : bId;
@@ -54,7 +54,7 @@ public class RoutingTable {
 		return nodes;
 	}
 
-	public List<Node> getSortedNodes(Key key) {
+	private List<Node> getSortedNodes(Key key) {
 		List<Node> nodes = getNodes();
 		Collections.sort(nodes, (node1, node2) -> node1.getId().getKey().xor(key.getKey()).abs()
 				.compareTo(node2.getId().getKey().xor(key.getKey()).abs()));

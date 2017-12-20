@@ -38,7 +38,7 @@ public class FindValueOperation extends BaseOperation {
 
 	@Override
 	public void execute() {
-		List<Node> nodes = KadDataManager.instance().getRoutingTable().getSortedNodes(key);
+		List<Node> nodes = KadDataManager.instance().getRoutingTable().findClosest(key);
 		execute(nodes);
 	}
 
