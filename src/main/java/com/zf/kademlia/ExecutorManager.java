@@ -31,7 +31,10 @@ public class ExecutorManager {
 
 	public static void scheduleAndCancelLast(Object requester, Runnable callable, long delay) {
 		ListenableScheduledFuture<?> future = manager.scheduledService.schedule(callable, delay, TimeUnit.MILLISECONDS);
-		manager.scheduledMap.remove(requester).cancel(true);
+		Future<?> lastFuture = manager.scheduledMap.remove(requester);
+		if (lastFuture != null) {
+			lastFuture.cancel(true);
+		}
 		manager.scheduledMap.put(requester, future);
 		future.addListener(createCompleteListener(requester), manager.executorService);
 	}

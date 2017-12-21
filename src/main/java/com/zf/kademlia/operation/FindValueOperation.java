@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.mina.util.ConcurrentHashSet;
 
-import com.zf.kademlia.KadDataManager;
+import com.zf.kademlia.Kademlia;
 import com.zf.kademlia.client.KademliaClient;
 import com.zf.kademlia.node.Key;
 import com.zf.kademlia.node.Node;
@@ -33,12 +33,12 @@ public class FindValueOperation extends BaseOperation {
 
 	@Override
 	public KadMessage createMessage() {
-		return new FindValue(KadDataManager.instance().getLocalNode(), key);
+		return new FindValue(Kademlia.localNode, key);
 	}
 
 	@Override
 	public void execute() {
-		List<Node> nodes = KadDataManager.instance().getRoutingTable().findClosest(key);
+		List<Node> nodes = Kademlia.routingTable.findClosest(key);
 		execute(nodes);
 	}
 
@@ -55,7 +55,7 @@ public class FindValueOperation extends BaseOperation {
 	public void onResponse(KadMessage message) {
 		if (message.getType() == MessageType.NODE_REPLY) {
 			List<Node> nodes = ((NodeReply) message).getNodes();
-			KadDataManager.instance().getRoutingTable().addNodes(nodes);
+			Kademlia.routingTable.addNodes(nodes);
 			execute(nodes);
 		} else if (message.getType() == MessageType.VALUE_REPLY) {
 			value.getAndSet(((ValueReply) message).getValue());

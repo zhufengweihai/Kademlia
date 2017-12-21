@@ -2,7 +2,7 @@ package com.zf.kademlia.operation;
 
 import java.util.List;
 
-import com.zf.kademlia.KadDataManager;
+import com.zf.kademlia.Kademlia;
 import com.zf.kademlia.client.KademliaClient;
 import com.zf.kademlia.node.Key;
 import com.zf.kademlia.node.Node;
@@ -25,7 +25,7 @@ public class StoreOperation extends BaseOperation {
 
 	@Override
 	public void execute() {
-		List<Node> nodes = KadDataManager.instance().getRoutingTable().findClosest(key);
+		List<Node> nodes = Kademlia.routingTable.findClosest(key);
 		for (Node node : nodes) {
 			KademliaClient.sendMessage(node, createMessage(), this);
 		}
@@ -33,6 +33,6 @@ public class StoreOperation extends BaseOperation {
 
 	@Override
 	public KadMessage createMessage() {
-		return new Store(KadDataManager.instance().getLocalNode(), key, value);
+		return new Store(Kademlia.localNode, key, value);
 	}
 }

@@ -10,7 +10,7 @@ import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.transport.socket.nio.NioDatagramConnector;
 
-import com.zf.kademlia.KadDataManager;
+import com.zf.kademlia.Kademlia;
 import com.zf.kademlia.node.Node;
 import com.zf.kademlia.operation.BaseOperation;
 import com.zf.kademlia.protocol.Codec;
@@ -65,7 +65,7 @@ public class KademliaClient extends IoHandlerAdapter {
 		IoSession session = connFuture.getSession();
 		session.setAttribute(ATTR_NODE, node);
 		session.setAttribute(ATTR_LISTENER, listener);
-		int networkTimeout = KadDataManager.instance().getConfig().getNetworkTimeout();
+		int networkTimeout = Kademlia.config.getNetworkTimeout();
 		session.getConfig().setIdleTime(IdleStatus.BOTH_IDLE, networkTimeout);
 		session.write(codec.encode(msg));
 	}

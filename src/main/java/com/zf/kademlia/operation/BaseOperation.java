@@ -1,6 +1,6 @@
 package com.zf.kademlia.operation;
 
-import com.zf.kademlia.KadDataManager;
+import com.zf.kademlia.Kademlia;
 import com.zf.kademlia.client.KadResponseListener;
 import com.zf.kademlia.client.KademliaClient;
 import com.zf.kademlia.node.Node;
@@ -28,6 +28,6 @@ public abstract class BaseOperation implements KadResponseListener {
 
 	@Override
 	public void onFailed(Node node) {
-		KadDataManager.instance().getRoutingTable().retireNode(node);
+		Kademlia.routingTable.retireNode(node);
 	}
 }

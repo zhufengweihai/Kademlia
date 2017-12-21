@@ -1,8 +1,6 @@
 package com.zf.kademlia.routing;
 
-import java.util.concurrent.ScheduledFuture;
-
-import com.zf.kademlia.KadDataManager;
+import com.zf.kademlia.Kademlia;
 import com.zf.kademlia.client.KadResponseListener;
 import com.zf.kademlia.client.KademliaClient;
 import com.zf.kademlia.node.Node;
@@ -11,7 +9,6 @@ import com.zf.kademlia.protocol.Ping;
 
 public class BucketProxy extends Bucket {
 	private Bucket bucket = null;
-	private ScheduledFuture sf = null;
 
 	public BucketProxy(int bucketId) {
 		bucket = new Bucket(bucketId);
@@ -21,7 +18,7 @@ public class BucketProxy extends Bucket {
 		bucket.addNode(node);
 
 		Node headNode = bucket.getHeadNode();
-		Ping ping = new Ping(KadDataManager.instance().getLocalNode());
+		Ping ping = new Ping(Kademlia.localNode);
 		KademliaClient.sendMessage(headNode, ping, new KadResponseListener() {
 			@Override
 			public void onResponse(KadMessage message) {
@@ -31,7 +28,7 @@ public class BucketProxy extends Bucket {
 
 			@Override
 			public void onFailed(Node ignore) {
-				updateNodesWhenHeadAbsent(node);
+				bucket.updateNodesWhenHeadAbsent(node);
 			}
 		});
 	}
@@ -42,7 +39,7 @@ public class BucketProxy extends Bucket {
 		}
 
 		Node node = bucket.getRandomNode();
-		Ping ping = new Ping(KadDataManager.instance().getLocalNode());
+		Ping ping = new Ping(Kademlia.localNode);
 		KademliaClient.sendMessage(node, ping, new KadResponseListener() {
 			@Override
 			public void onResponse(KadMessage message) {
@@ -62,7 +59,7 @@ public class BucketProxy extends Bucket {
 		while (bucket.isFull()) {
 			Node replaceNode;
 			while ((replaceNode = bucket.getAndRemoveHeadReplaceNode()) != null) {
-				Ping ping = new Ping(KadDataManager.instance().getLocalNode());
+				Ping ping = new Ping(Kademlia.localNode);
 				KademliaClient.sendMessage(replaceNode, ping, new KadResponseListener() {
 					@Override
 					public void onResponse(KadMessage message) {

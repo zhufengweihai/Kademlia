@@ -1,6 +1,6 @@
 package com.zf.kademlia.operation;
 
-import com.zf.kademlia.KadDataManager;
+import com.zf.kademlia.Kademlia;
 import com.zf.kademlia.node.Node;
 import com.zf.kademlia.protocol.KadMessage;
 import com.zf.kademlia.protocol.Ping;
@@ -16,11 +16,11 @@ public class PingOperation extends BaseOperation {
 
 	@Override
 	public KadMessage createMessage() {
-		return new Ping(KadDataManager.instance().getLocalNode());
+		return new Ping(Kademlia.localNode);
 	}
 
 	@Override
 	public void onResponse(KadMessage message) {
-		KadDataManager.instance().getRoutingTable().addNode(message.getOrigin());
+		Kademlia.routingTable.addNode(message.getOrigin());
 	}
 }

@@ -3,7 +3,7 @@ package com.zf.kademlia.routing;
 import java.util.LinkedList;
 import java.util.Random;
 
-import com.zf.kademlia.KadDataManager;
+import com.zf.kademlia.Kademlia;
 import com.zf.kademlia.node.Node;
 
 import lombok.Getter;
@@ -25,8 +25,7 @@ class Bucket {
 	}
 
 	public void addNode(Node node) {
-		int k = KadDataManager.instance().getConfig().getK();
-		if (nodes.size() < k) {
+		if (nodes.size() < Kademlia.config.getK()) {
 			nodes.add(node);
 		}
 	}
@@ -55,7 +54,7 @@ class Bucket {
 	}
 
 	boolean isFull() {
-		return nodes.size() < KadDataManager.instance().getConfig().getK();
+		return nodes.size() < Kademlia.config.getK();
 	}
 
 	Node getRandomNode() {
@@ -63,7 +62,7 @@ class Bucket {
 	}
 
 	void updateReplaceNodes(Node node) {
-		int k = KadDataManager.instance().getConfig().getK();
+		int k = Kademlia.config.getK();
 		replaceNodes.add(node);
 		if (replaceNodes.size() > k) {
 			replaceNodes.remove(replaceNodes.size() - 1);
@@ -79,7 +78,7 @@ class Bucket {
 
 	private boolean shouldRefresh() {
 		long current = System.currentTimeMillis();
-		int refreshInterval = KadDataManager.instance().getConfig().getRefreshInterval();
+		int refreshInterval = Kademlia.config.getRefreshInterval();
 		for (Node node : nodes) {
 			if (current - node.getLastSeen() >= refreshInterval) {
 				return true;

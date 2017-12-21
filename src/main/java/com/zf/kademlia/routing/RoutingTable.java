@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.zf.kademlia.KadDataManager;
+import com.zf.kademlia.Kademlia;
 import com.zf.kademlia.node.Key;
 import com.zf.kademlia.node.Node;
 
@@ -29,13 +29,13 @@ public class RoutingTable {
 	 * 计算给定节点应放置的桶ID; bucketId是根据多远的距离来计算的节点远离本地节点。
 	 */
 	public int getBucketId(Key nid) {
-		int bId = KadDataManager.instance().getLocalNode().getId().getDistance(nid) - 1;
+		int bId = Kademlia.localNode.getId().getDistance(nid) - 1;
 		// 如果我们试图将一个节点插入到它自己的路由表中，那么存储区ID将是-1，所以将其设置为0桶
 		return bId < 0 ? 0 : bId;
 	}
 
 	public void addNode(Node node) {
-		if (!node.equals(KadDataManager.instance().getLocalNode())) {
+		if (!node.equals(Kademlia.localNode)) {
 			buckets[getBucketId(node.getId())].addNode(node);
 		}
 	}
@@ -63,7 +63,7 @@ public class RoutingTable {
 
 	public List<Node> findClosest(Key lookupId) {
 		List<Node> nodes = getSortedNodes(lookupId);
-		int k = KadDataManager.instance().getConfig().getK();
+		int k = Kademlia.config.getK();
 		if (k >= nodes.size()) {
 			return nodes;
 		}

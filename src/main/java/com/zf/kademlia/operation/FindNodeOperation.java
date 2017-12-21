@@ -2,7 +2,7 @@ package com.zf.kademlia.operation;
 
 import java.util.List;
 
-import com.zf.kademlia.KadDataManager;
+import com.zf.kademlia.Kademlia;
 import com.zf.kademlia.node.Key;
 import com.zf.kademlia.node.Node;
 import com.zf.kademlia.protocol.FindNode;
@@ -24,13 +24,13 @@ public class FindNodeOperation extends BaseOperation {
 
 	@Override
 	public KadMessage createMessage() {
-		return new FindNode(KadDataManager.instance().getLocalNode(), key);
+		return new FindNode(Kademlia.localNode, key);
 	}
 
 	@Override
 	public void onResponse(KadMessage message) {
 		NodeReply nodeReply = (NodeReply) message;
 		List<Node> nodes = nodeReply.getNodes();
-		KadDataManager.instance().getRoutingTable().addNodes(nodes);
+		Kademlia.routingTable.addNodes(nodes);
 	}
 }
