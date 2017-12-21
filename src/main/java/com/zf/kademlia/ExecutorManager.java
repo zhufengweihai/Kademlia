@@ -31,12 +31,14 @@ public class ExecutorManager {
 
 	public static void scheduleAndCancelLast(Object requester, Runnable callable, long delay) {
 		ListenableScheduledFuture<?> future = manager.scheduledService.schedule(callable, delay, TimeUnit.MILLISECONDS);
-		future.addListener(createCompleteListener(future), manager.executorService);
+		manager.scheduledMap.remove(requester).cancel(true);
+		manager.scheduledMap.put(requester, future);
+		future.addListener(createCompleteListener(requester), manager.executorService);
 	}
 
-	private static Runnable createCompleteListener(Future<?> future) {
+	private static Runnable createCompleteListener(Object requester) {
 		return () -> {
-			manager.scheduledMap.remove(future);
+			manager.scheduledMap.remove(requester);
 		};
 	}
 }
