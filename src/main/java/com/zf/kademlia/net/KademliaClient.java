@@ -1,4 +1,4 @@
-package com.zf.kademlia.client;
+package com.zf.kademlia.net;
 
 import java.net.InetSocketAddress;
 
@@ -21,8 +21,10 @@ import com.zf.kademlia.protocol.KadMessage;
  * @date 2017-12-13.
  */
 public class KademliaClient extends IoHandlerAdapter {
-	private static final String ATTR_LISTENER = "listener";
 	private static final String ATTR_NODE = "node";
+	private static final String ATTR_MESSAGE = "message";
+	private static final String ATTR_RETRIES_COUNT = "retriesCount";
+	private static final String ATTR_LISTENER = "listener";
 	private static KademliaClient instance = new KademliaClient();
 
 	private IoConnector connector = new NioDatagramConnector();
@@ -35,15 +37,13 @@ public class KademliaClient extends IoHandlerAdapter {
 
 	public void sessionIdle(IoSession session, IdleStatus status) {
 		if (status == IdleStatus.BOTH_IDLE) {
-			session.closeNow();
-			KadResponseListener listener = (KadResponseListener) session.getAttribute(ATTR_LISTENER);
-			listener.onFailed((Node) session.getAttribute(ATTR_NODE));
+			onFailed(session);
 		}
 	}
 
 	@Override
 	public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
-		((BaseOperation) session.getAttribute(ATTR_LISTENER)).onFailed((Node) session.getAttribute(ATTR_NODE));
+		onFailed(session);
 	}
 
 	@Override
@@ -53,8 +53,14 @@ public class KademliaClient extends IoHandlerAdapter {
 		((BaseOperation) session.getAttribute(ATTR_LISTENER)).onResponse(kadMessage);
 	}
 
-	public static void sendMessage(Node node, KadMessage msg, KadResponseListener listener) {
-		instance.send(node, msg, listener);
+	private void onFailed(IoSession session) {
+		session.closeNow();
+		KadResponseListener listener = (KadResponseListener) session.getAttribute(ATTR_LISTENER);
+		if ((int) session.getAttribute(ATTR_RETRIES_COUNT) < Kademlia.config.getRetriesCount()) {
+			send((Node) session.getAttribute(ATTR_NODE), (KadMessage) session.getAttribute(ATTR_MESSAGE), listener);
+		} else {
+			listener.onFailed((Node) session.getAttribute(ATTR_NODE));
+		}
 	}
 
 	private void send(Node node, KadMessage msg, KadResponseListener listener) {
@@ -64,10 +70,16 @@ public class KademliaClient extends IoHandlerAdapter {
 
 		IoSession session = connFuture.getSession();
 		session.setAttribute(ATTR_NODE, node);
+		session.setAttribute(ATTR_MESSAGE, msg);
 		session.setAttribute(ATTR_LISTENER, listener);
 		int networkTimeout = Kademlia.config.getNetworkTimeout();
 		session.getConfig().setIdleTime(IdleStatus.BOTH_IDLE, networkTimeout);
+		session.setAttribute(ATTR_RETRIES_COUNT, 1);
 		session.write(codec.encode(msg));
+	}
+
+	public static void sendMessage(Node node, KadMessage msg, KadResponseListener listener) {
+		instance.send(node, msg, listener);
 	}
 
 	public void close() {

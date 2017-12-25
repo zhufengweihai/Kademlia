@@ -3,7 +3,7 @@ package com.zf.kademlia.operation;
 import java.util.List;
 
 import com.zf.kademlia.Kademlia;
-import com.zf.kademlia.client.KademliaClient;
+import com.zf.kademlia.net.KademliaClient;
 import com.zf.kademlia.node.Key;
 import com.zf.kademlia.node.Node;
 import com.zf.kademlia.protocol.KadMessage;

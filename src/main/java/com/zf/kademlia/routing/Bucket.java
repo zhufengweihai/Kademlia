@@ -25,9 +25,16 @@ class Bucket {
 	}
 
 	public void addNode(Node node) {
-		if (nodes.size() < Kademlia.config.getK()) {
-			nodes.add(node);
-		}
+		nodes.addLast(node);
+		refreshBucket();
+	}
+
+	void refreshBucket() {
+
+	}
+
+	public void retireNode(Node retireNode) {
+
 	}
 
 	Node getHeadNode() {
@@ -37,16 +44,16 @@ class Bucket {
 	void updateNode(Node node) {
 		nodes.remove(node);
 		node.setLastSeen(System.currentTimeMillis());
-		nodes.addLast(node);
+		addNode(node);
 	}
 
 	void removeNode(Node node) {
 		nodes.remove(node);
 	}
 
-	void updateNodesWhenHeadAbsent(Node node) {
+	void addNodeAndRemoveHead(Node node) {
 		nodes.removeFirst();
-		nodes.addLast(node);
+		addNode(node);
 	}
 
 	boolean isEmpty() {
@@ -74,16 +81,5 @@ class Bucket {
 			return replaceNodes.removeFirst();
 		}
 		return null;
-	}
-
-	private boolean shouldRefresh() {
-		long current = System.currentTimeMillis();
-		int refreshInterval = Kademlia.config.getRefreshInterval();
-		for (Node node : nodes) {
-			if (current - node.getLastSeen() >= refreshInterval) {
-				return true;
-			}
-		}
-		return false;
 	}
 }

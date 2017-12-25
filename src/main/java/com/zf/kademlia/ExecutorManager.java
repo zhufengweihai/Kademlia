@@ -24,7 +24,7 @@ public class ExecutorManager {
 	private Map<Object, Future<?>> scheduledMap = null;
 
 	private ExecutorManager() {
-		executorService = new ThreadPoolExecutor(0, 3, 1L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+		executorService = new ThreadPoolExecutor(0, 3, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
 		scheduledService = MoreExecutors.listeningDecorator(new ScheduledThreadPoolExecutor(1));
 		scheduledMap = new HashMap<>();
 	}

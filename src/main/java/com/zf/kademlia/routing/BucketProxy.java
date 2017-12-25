@@ -1,8 +1,9 @@
 package com.zf.kademlia.routing;
 
+import com.zf.kademlia.ExecutorManager;
 import com.zf.kademlia.Kademlia;
-import com.zf.kademlia.client.KadResponseListener;
-import com.zf.kademlia.client.KademliaClient;
+import com.zf.kademlia.net.KadResponseListener;
+import com.zf.kademlia.net.KademliaClient;
 import com.zf.kademlia.node.Node;
 import com.zf.kademlia.protocol.KadMessage;
 import com.zf.kademlia.protocol.Ping;
@@ -14,12 +15,8 @@ public class BucketProxy extends Bucket {
 		bucket = new Bucket(bucketId);
 	}
 
-	public void addNode(Node node) {
-		bucket.addNode(node);
-
-		Node headNode = bucket.getHeadNode();
-		Ping ping = new Ping(Kademlia.localNode);
-		KademliaClient.sendMessage(headNode, ping, new KadResponseListener() {
+	private KadResponseListener createAddNodeListener(Node node, Node headNode) {
+		return new KadResponseListener() {
 			@Override
 			public void onResponse(KadMessage message) {
 				bucket.updateNode(headNode);
@@ -28,19 +25,13 @@ public class BucketProxy extends Bucket {
 
 			@Override
 			public void onFailed(Node ignore) {
-				bucket.updateNodesWhenHeadAbsent(node);
+				bucket.addNodeAndRemoveHead(node);
 			}
-		});
+		};
 	}
 
-	public void refreshBucket() {
-		if (bucket.isEmpty()) {
-			return;
-		}
-
-		Node node = bucket.getRandomNode();
-		Ping ping = new Ping(Kademlia.localNode);
-		KademliaClient.sendMessage(node, ping, new KadResponseListener() {
+	private KadResponseListener createRefreshListener(Node node) {
+		return new KadResponseListener() {
 			@Override
 			public void onResponse(KadMessage message) {
 				bucket.updateNode(node);
@@ -50,9 +41,7 @@ public class BucketProxy extends Bucket {
 			public void onFailed(Node ignore) {
 				bucket.removeNode(node);
 			}
-		});
-
-		ChooseAliveOneFromReplaceNodes();
+		};
 	}
 
 	private void ChooseAliveOneFromReplaceNodes() {
@@ -60,18 +49,47 @@ public class BucketProxy extends Bucket {
 			Node replaceNode;
 			while ((replaceNode = bucket.getAndRemoveHeadReplaceNode()) != null) {
 				Ping ping = new Ping(Kademlia.localNode);
-				KademliaClient.sendMessage(replaceNode, ping, new KadResponseListener() {
-					@Override
-					public void onResponse(KadMessage message) {
-						bucket.updateNode(message.getOrigin());
-					}
-				});
+				KademliaClient.sendMessage(replaceNode, ping, createChooseReplaceListener());
 			}
 		}
 	}
 
+	private KadResponseListener createChooseReplaceListener() {
+		return new KadResponseListener() {
+			@Override
+			public void onResponse(KadMessage message) {
+				bucket.updateNode(message.getOrigin());
+			}
+		};
+	}
+
+	void refreshBucket() {
+		Runnable task = () -> {
+			if (bucket.isEmpty()) {
+				return;
+			}
+
+			Node node = bucket.getRandomNode();
+			Ping ping = new Ping(Kademlia.localNode);
+			KademliaClient.sendMessage(node, ping, createRefreshListener(node));
+			ChooseAliveOneFromReplaceNodes();
+		};
+		ExecutorManager.scheduleAndCancelLast(this, task, Kademlia.config.getRefreshInterval());
+	}
+
+	public void addNode(Node node) {
+		if (isFull()) {
+			Node headNode = bucket.getHeadNode();
+			Ping ping = new Ping(Kademlia.localNode);
+			KademliaClient.sendMessage(headNode, ping, createAddNodeListener(node, headNode));
+			return;
+		}
+
+		bucket.addNode(node);
+	}
+
 	public void retireNode(Node retireNode) {
-		bucket.removeNode(retireNode);
+		bucket.retireNode(retireNode);
 		ChooseAliveOneFromReplaceNodes();
 	}
 }

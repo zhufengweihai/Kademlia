@@ -1,4 +1,4 @@
-package com.zf.kademlia.client;
+package com.zf.kademlia.net;
 
 import com.zf.kademlia.node.Node;
 import com.zf.kademlia.protocol.KadMessage;
