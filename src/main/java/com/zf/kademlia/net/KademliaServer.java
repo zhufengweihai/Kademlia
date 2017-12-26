@@ -1,11 +1,12 @@
 package com.zf.kademlia.net;
 
 import java.awt.Event;
+import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import org.apache.mina.core.service.IoConnector;
-import org.apache.mina.transport.socket.nio.NioDatagramConnector;
+import org.apache.mina.transport.socket.DatagramSessionConfig;
+import org.apache.mina.transport.socket.nio.NioDatagramAcceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,8 +20,7 @@ import lombok.Data;
 @Data
 public class KademliaServer {
 	private static final Logger LOGGER = LoggerFactory.getLogger(KademliaServer.class);
-
-	private IoConnector connector = new NioDatagramConnector();
+	private NioDatagramAcceptor acceptor = new NioDatagramAcceptor();
 	private final LocalStorage localStorage;
 	private final Map<String, Consumer<Event>> eventConsumers;
 
@@ -29,31 +29,15 @@ public class KademliaServer {
 		this.localStorage = localStorage;
 		this.eventConsumers = eventConsumers;
 
-		this.group = new NioEventLoopGroup();
-		new Thread(() -> {
-			try {
-				Bootstrap b = new Bootstrap();
+		acceptor.setHandler(new MemoryMonitorHandler(this));
 
-				b.group(group).channel(NioDatagramChannel.class).option(ChannelOption.SO_BROADCAST, false)
-						.handler(new KademliaServerHandler(this.routingTable, this.localStorage, this.localNode,
-								this.kValue, this.eventConsumers));
+		DatagramSessionConfig dcfg = acceptor.getSessionConfig();
+		dcfg.setReuseAddress(true);
 
-				b.bind(bindingAddress, port).sync().channel().closeFuture().await();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} finally {
-				group.shutdownGracefully();
-			}
-		}).start();
-
-		LOGGER.info("Kademlia Listener started");
+		acceptor.bind(new InetSocketAddress(port));
 	}
 
 	public void close() {
-		try {
-			group.shutdownGracefully().await();
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		}
+		acceptor.dispose();
 	}
 }

@@ -1,10 +1,10 @@
 package com.zf.kademlia.storage;
 
-import de.cgrotz.kademlia.node.Key;
-
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+
+import com.zf.kademlia.node.Key;
 
 /**
  * Created by Christoph on 23.09.2016.

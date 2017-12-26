@@ -2,7 +2,7 @@ package com.zf.kademlia.storage;
 
 import java.util.List;
 
-import de.cgrotz.kademlia.node.Key;
+import com.zf.kademlia.node.Key;
 
 /**
  * Created by Christoph on 23.09.2016.
