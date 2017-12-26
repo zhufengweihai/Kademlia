@@ -17,8 +17,8 @@ public class StoreOperation extends BaseOperation {
 	private Key key = null;
 	private String value = null;
 
-	public StoreOperation(Node node, Key key, String value) {
-		super(node);
+	public StoreOperation(Key key, String value) {
+		super(null);
 		this.key = key;
 		this.value = value;
 	}

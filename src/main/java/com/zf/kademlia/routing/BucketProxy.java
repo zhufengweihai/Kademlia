@@ -77,15 +77,13 @@ public class BucketProxy extends Bucket {
 		ExecutorManager.scheduleAndCancelLast(this, task, Kademlia.config.getRefreshInterval());
 	}
 
-	public void addNode(Node node) {
-		if (isFull()) {
+	public boolean addNode(Node node) {
+		if (!bucket.addNode(node)) {
 			Node headNode = bucket.getHeadNode();
 			Ping ping = new Ping(Kademlia.localNode);
 			KademliaClient.sendMessage(headNode, ping, createAddNodeListener(node, headNode));
-			return;
 		}
-
-		bucket.addNode(node);
+		return true;
 	}
 
 	public void retireNode(Node retireNode) {

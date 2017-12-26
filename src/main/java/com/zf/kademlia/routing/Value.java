@@ -1,5 +1,6 @@
 package com.zf.kademlia.routing;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,6 +10,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@AllArgsConstructor
 public class Value {
 	private long lastPublished;
 	private String content;

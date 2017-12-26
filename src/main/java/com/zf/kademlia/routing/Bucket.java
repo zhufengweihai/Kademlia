@@ -24,9 +24,16 @@ class Bucket {
 		this.bucketId = bucketId;
 	}
 
-	public void addNode(Node node) {
-		nodes.addLast(node);
-		refreshBucket();
+	public boolean addNode(Node node) {
+		if (nodes.contains(node)) {
+			nodes.remove(node);
+		}
+		if (nodes.size() < Kademlia.config.getK()) {
+			nodes.addLast(node);
+			refreshBucket();
+			return true;
+		}
+		return false;
 	}
 
 	void refreshBucket() {
@@ -34,7 +41,7 @@ class Bucket {
 	}
 
 	public void retireNode(Node retireNode) {
-
+		nodes.remove(retireNode);
 	}
 
 	Node getHeadNode() {
@@ -61,7 +68,7 @@ class Bucket {
 	}
 
 	boolean isFull() {
-		return nodes.size() < Kademlia.config.getK();
+		return nodes.size() == Kademlia.config.getK();
 	}
 
 	Node getRandomNode() {
