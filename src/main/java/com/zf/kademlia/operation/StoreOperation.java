@@ -24,15 +24,15 @@ public class StoreOperation extends BaseOperation {
 	}
 
 	@Override
+	KadMessage createMessage() {
+		return new Store(Kademlia.localNode, key, value);
+	}
+
+	@Override
 	public void execute() {
 		List<Node> nodes = Kademlia.routingTable.findClosest(key);
 		for (Node node : nodes) {
 			KademliaClient.sendMessage(node, createMessage(), this);
 		}
-	}
-
-	@Override
-	public KadMessage createMessage() {
-		return new Store(Kademlia.localNode, key, value);
 	}
 }

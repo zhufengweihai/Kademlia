@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import com.zf.kademlia.node.Key;
 import com.zf.kademlia.node.Node;
 import com.zf.kademlia.operation.FindNodeOperation;
+import com.zf.kademlia.operation.FindValueOperation;
 import com.zf.kademlia.operation.PingOperation;
 import com.zf.kademlia.operation.StoreOperation;
 import com.zf.kademlia.routing.RoutingTable;
@@ -22,10 +23,6 @@ public class Kademlia {
 	public static RoutingTable routingTable = null;
 	public static ValueTable valueTable = null;
 
-	private void init() {
-
-	}
-
 	public void bootstrap(Node bootstrapNode) {
 		new PingOperation(bootstrapNode).execute();
 		new FindNodeOperation(bootstrapNode, localNode.getId()).execute();
@@ -33,6 +30,15 @@ public class Kademlia {
 
 	public void store(Key key, String value) {
 		new StoreOperation(key, value).execute();
+	}
+
+	public String get(Key key) {
+		if (valueTable.contains(key)) {
+			return valueTable.get(key).getContent();
+		}
+		FindValueOperation operation = new FindValueOperation(key);
+		operation.execute();
+		return operation.getValue();
 	}
 
 	public void close() {

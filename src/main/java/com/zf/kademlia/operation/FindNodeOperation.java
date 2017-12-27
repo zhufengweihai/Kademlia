@@ -23,7 +23,7 @@ public class FindNodeOperation extends BaseOperation {
 	}
 
 	@Override
-	public KadMessage createMessage() {
+	KadMessage createMessage() {
 		return new FindNode(Kademlia.localNode, key);
 	}
 

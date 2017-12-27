@@ -8,12 +8,25 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.zf.kademlia.node.Key;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.config.CacheConfiguration;
+import net.sf.ehcache.config.PersistenceConfiguration;
+import net.sf.ehcache.config.PersistenceConfiguration.Strategy;
+import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
+
 /**
  * @author zhufeng
  * @date 2017-12-15
  */
 public class ValueTable {
 	private ConcurrentHashMap<Key, Value> map = new ConcurrentHashMap<>();
+
+	public ValueTable() {
+		CacheConfiguration config = new CacheConfiguration("Kademlia", 1000)
+				.memoryStoreEvictionPolicy(MemoryStoreEvictionPolicy.LFU)
+				.persistence(new PersistenceConfiguration().strategy(Strategy.LOCALTEMPSWAP)).eternal(true);
+		Cache testCache = new Cache(config);
+	}
 
 	public void put(Key key, Value value) {
 		map.put(key, value);

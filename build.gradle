@@ -25,6 +25,7 @@ dependencies {
     compile 'org.apache.mina:mina-filter-compression:2.0.16'
     compile 'org.apache.mina:mina-transport-apr:2.0.16'
     compile 'com.google.guava:guava:23.5-jre'
+    compile 'net.sf.ehcache:ehcache:2.10.4'
     
     compileOnly 'org.projectlombok:lombok:1.16.18'
     //annotationProcessor "org.projectlombok:lombok:1.16.18"

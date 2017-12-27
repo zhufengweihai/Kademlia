@@ -20,7 +20,7 @@ import lombok.Setter;
 public abstract class BaseOperation implements KadResponseListener {
 	Node node;
 
-	public abstract KadMessage createMessage();
+	abstract KadMessage createMessage();
 
 	public void execute() {
 		KademliaClient.sendMessage(node, createMessage(), this);

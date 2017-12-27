@@ -15,7 +15,7 @@ public class PingOperation extends BaseOperation {
 	}
 
 	@Override
-	public KadMessage createMessage() {
+	KadMessage createMessage() {
 		return new Ping(Kademlia.localNode);
 	}
 
