@@ -23,6 +23,11 @@ public class Kademlia {
 	public static RoutingTable routingTable = null;
 	public static ValueTable valueTable = null;
 
+	public Kademlia() {
+		
+		valueTable = ValueTable.build("");
+	}
+
 	public void bootstrap(Node bootstrapNode) {
 		new PingOperation(bootstrapNode).execute();
 		new FindNodeOperation(bootstrapNode, localNode.getId()).execute();

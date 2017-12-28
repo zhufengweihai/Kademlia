@@ -16,9 +16,13 @@ import lombok.ToString;
  */
 @ToString
 public class RoutingTable {
-	private final BucketProxy[] buckets;
+	private BucketProxy[] buckets;
 
 	public RoutingTable() {
+		initBucket();
+	}
+
+	void initBucket() {
 		buckets = new BucketProxy[Key.ID_LENGTH];
 		for (int i = 0; i < Key.ID_LENGTH; i++) {
 			buckets[i] = new BucketProxy(i);
@@ -28,7 +32,7 @@ public class RoutingTable {
 	/**
 	 * 计算给定节点应放置的桶ID; bucketId是根据多远的距离来计算的节点远离本地节点。
 	 */
-	public int getBucketId(Key nid) {
+	private int getBucketId(Key nid) {
 		int bId = Kademlia.localNode.getId().getDistance(nid) - 1;
 		// 如果我们试图将一个节点插入到它自己的路由表中，那么存储区ID将是-1，所以将其设置为0桶
 		return bId < 0 ? 0 : bId;

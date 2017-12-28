@@ -1,5 +1,7 @@
 package com.zf.kademlia.routing;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +13,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class Value {
+public class Value implements Serializable{
 	private long lastPublished;
 	private String content;
 }

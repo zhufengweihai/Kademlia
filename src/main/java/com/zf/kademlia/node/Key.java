@@ -1,5 +1,6 @@
 package com.zf.kademlia.node;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -13,7 +14,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(of = "key")
-public class Key {
+public class Key implements Serializable{
     public final static int ID_LENGTH = 160;
 
     private BigInteger key = null;
@@ -37,7 +38,7 @@ public class Key {
     public static Key random() {
         try {
             byte[] bytes = new byte[ID_LENGTH / 8];
-            SecureRandom.getInstance("SHA1").nextBytes(bytes);
+            SecureRandom.getInstance("SHA1PRNG").nextBytes(bytes);
             return new Key(bytes);
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("generate key error", e);
