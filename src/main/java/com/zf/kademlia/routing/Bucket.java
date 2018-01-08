@@ -1,5 +1,6 @@
 package com.zf.kademlia.routing;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -15,7 +16,9 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor
-class Bucket {
+class Bucket implements Serializable {
+	private static final long serialVersionUID = -6221071259605427625L;
+
 	private int bucketId;
 	private LinkedList<Node> nodes = new LinkedList<Node>();
 	private LinkedList<Node> replaceNodes = new LinkedList<Node>();
@@ -30,14 +33,9 @@ class Bucket {
 		}
 		if (nodes.size() < Kademlia.config.getK()) {
 			nodes.addLast(node);
-			refreshBucket();
 			return true;
 		}
 		return false;
-	}
-
-	void refreshBucket() {
-
 	}
 
 	public void retireNode(Node retireNode) {

@@ -4,14 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import com.google.common.util.concurrent.ListenableScheduledFuture;
-import com.google.common.util.concurrent.ListeningScheduledExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
 
 /**
  * @author zhufeng
@@ -20,28 +17,15 @@ import com.google.common.util.concurrent.MoreExecutors;
 public class ExecutorManager {
 	private static ExecutorManager manager = new ExecutorManager();
 	private ExecutorService executorService = null;
-	private ListeningScheduledExecutorService scheduledService = null;
-	private Map<Object, Future<?>> scheduledMap = null;
+	private ScheduledExecutorService scheduledService = null;
 
 	private ExecutorManager() {
 		executorService = new ThreadPoolExecutor(0, 3, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
-		scheduledService = MoreExecutors.listeningDecorator(new ScheduledThreadPoolExecutor(1));
-		scheduledMap = new HashMap<>();
+		scheduledService = new ScheduledThreadPoolExecutor(0);
+		new HashMap<>();
 	}
 
-	public static void scheduleAndCancelLast(Object requester, Runnable callable, long delay) {
-		ListenableScheduledFuture<?> future = manager.scheduledService.schedule(callable, delay, TimeUnit.MILLISECONDS);
-		Future<?> lastFuture = manager.scheduledMap.remove(requester);
-		if (lastFuture != null) {
-			lastFuture.cancel(true);
-		}
-		manager.scheduledMap.put(requester, future);
-		future.addListener(createCompleteListener(requester), manager.executorService);
-	}
-
-	private static Runnable createCompleteListener(Object requester) {
-		return () -> {
-			manager.scheduledMap.remove(requester);
-		};
+	public static void schedule(Runnable callable, long delay) {
+		manager.scheduledService.schedule(callable, delay, TimeUnit.MILLISECONDS);
 	}
 }

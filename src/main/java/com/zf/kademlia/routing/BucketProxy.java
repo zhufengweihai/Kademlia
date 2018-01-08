@@ -9,10 +9,17 @@ import com.zf.kademlia.protocol.KadMessage;
 import com.zf.kademlia.protocol.Ping;
 
 public class BucketProxy extends Bucket {
+	private static final long serialVersionUID = -6538531635387972381L;
+
 	private Bucket bucket = null;
 
 	public BucketProxy(int bucketId) {
-		bucket = new Bucket(bucketId);
+		this(new Bucket(bucketId));
+	}
+
+	public BucketProxy(Bucket bucket) {
+		this.bucket = bucket;
+		refreshBucket();
 	}
 
 	private KadResponseListener createAddNodeListener(Node node, Node headNode) {
@@ -74,7 +81,7 @@ public class BucketProxy extends Bucket {
 			KademliaClient.sendMessage(node, ping, createRefreshListener(node));
 			ChooseAliveOneFromReplaceNodes();
 		};
-		ExecutorManager.scheduleAndCancelLast(this, task, Kademlia.config.getRefreshInterval());
+		ExecutorManager.schedule(task, Kademlia.config.getRefreshInterval());
 	}
 
 	public boolean addNode(Node node) {

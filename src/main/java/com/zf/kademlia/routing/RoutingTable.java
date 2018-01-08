@@ -16,10 +16,14 @@ import lombok.ToString;
  */
 @ToString
 public class RoutingTable {
-	private BucketProxy[] buckets;
+	BucketProxy[] buckets;
 
 	public RoutingTable() {
 		initBucket();
+	}
+
+	void addBucket(Bucket bucket) {
+		buckets[bucket.getBucketId()] = new BucketProxy(bucket);
 	}
 
 	void initBucket() {
@@ -76,5 +80,9 @@ public class RoutingTable {
 
 	public void retireNode(Node node) {
 		buckets[getBucketId(node.getId())].retireNode(node);
+	}
+
+	public static RoutingTable build() {
+		return new StorableRoutingTable();
 	}
 }

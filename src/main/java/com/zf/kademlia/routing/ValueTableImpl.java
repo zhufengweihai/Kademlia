@@ -24,7 +24,8 @@ public class ValueTableImpl implements ValueTable {
 	private Cache<Key, Value> map = null;
 	private CacheManager cacheManager = null;
 
-	public ValueTableImpl(String alias) {
+	public ValueTableImpl() {
+		String alias = "kademlia";
 		cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
 				.with(CacheManagerBuilder.persistence(alias + File.separator + ".dat")) // 传入磁盘持久化的地址
 				.withCache(alias,
@@ -32,11 +33,7 @@ public class ValueTableImpl implements ValueTable {
 								ResourcePoolsBuilder.newResourcePoolsBuilder().heap(10, EntryUnit.ENTRIES).disk(10,
 										MemoryUnit.MB, true)) // 定义一个资源的磁盘池
 				).build(true);
-
 		map = cacheManager.getCache(alias, Key.class, Value.class);
-		// map = cacheManager.createCache("myCache", CacheConfigurationBuilder
-		// .newCacheConfigurationBuilder(Long.class, String.class,
-		// ResourcePoolsBuilder.heap(100)).build());
 	}
 
 	@Override
@@ -80,7 +77,7 @@ public class ValueTableImpl implements ValueTable {
 	}
 
 	public static void main(String[] args) {
-		ValueTableImpl valueTable = new ValueTableImpl("");
+		ValueTableImpl valueTable = new ValueTableImpl();
 		// valueTable.map.clear();
 		for (int i = 0; i < 200; i++) {
 			String v = String.valueOf(i);

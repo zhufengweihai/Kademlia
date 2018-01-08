@@ -18,7 +18,7 @@ public interface ValueTable {
 
 	void dispose();
 
-	public static ValueTable build(String alias) {
-		return new ValueTableImpl(alias);
+	public static ValueTable build() {
+		return new ValueTableImpl();
 	}
 }
